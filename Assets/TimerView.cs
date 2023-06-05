@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +13,8 @@ public class TimerView : MonoBehaviour, ITimerView
     [SerializeField] private Text txt_buttonState;
     [SerializeField] private Text txt_timer;
     private TimerManager timerManager;
+    
+    public event Action<bool> OnChangeTimerState;
 
     private void Start()
     {
@@ -36,5 +39,16 @@ public class TimerView : MonoBehaviour, ITimerView
     public void OnClickButton()
     {
         timerManager.OnClickButton();
+        switch (timerManager.CurrentTimerState)
+        {
+            case TimerState.Start:
+            case TimerState.Stop:
+                OnChangeTimerState?.Invoke(false);
+                break;
+
+            case TimerState.Play:
+                OnChangeTimerState?.Invoke(true);
+                break;
+        }
     }
 }
