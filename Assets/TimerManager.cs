@@ -1,61 +1,63 @@
-using UnityEngine;
-using UnityEngine.UI;
-
-public class TimerManager : MonoBehaviour
+public class TimerManager
 {
-    [SerializeField] private Text txt_buttonState;
-    [SerializeField] private Text txt_timer;
-    private TimerState currentTimerState = TimerState.Start;
-    private float timer = 0;
+    private ITimerView timerView;
 
-    private void Start()
+    public float Timer { get; private set; }
+    public TimerState CurrentTimerState { get; private set; }
+
+    public TimerManager(ITimerView view)
     {
+        Timer = 0;
+        CurrentTimerState = TimerState.Start;
+        timerView = view;
         RefreshButtonStateText();
+        timerView.SetTimerDisplay(ConvertTimerText(Timer));
     }
 
-    private void Update()
+    public void CheckRefreshTimer(float deltaTime)
     {
-        if (currentTimerState != TimerState.Play)
+        if (CurrentTimerState != TimerState.Play)
             return;
 
-        RefreshTimer();
+        Timer += deltaTime;
+        timerView.SetTimerDisplay(ConvertTimerText(Timer));
     }
 
-    private void RefreshTimer()
+    private string ConvertTimerText(float timer)
     {
-        timer += Time.deltaTime;
-        txt_timer.text = timer.ToString("0.0");
+        return timer.ToString("0.0");
     }
 
     private void RefreshButtonStateText()
     {
-        switch (currentTimerState)
+        switch (CurrentTimerState)
         {
             case TimerState.Start:
-                txt_buttonState.text = "O";
+                timerView.SetButtonText("O");
                 break;
 
             case TimerState.Play:
-                txt_buttonState.text = ">";
+                timerView.SetButtonText(">");
                 break;
 
             case TimerState.Stop:
-                txt_buttonState.text = "=";
+                timerView.SetButtonText("=");
                 break;
         }
     }
 
+
     public void OnClickButton()
     {
-        switch (currentTimerState)
+        switch (CurrentTimerState)
         {
             case TimerState.Start:
             case TimerState.Stop:
-                currentTimerState = TimerState.Play;
+                CurrentTimerState = TimerState.Play;
                 break;
 
             case TimerState.Play:
-                currentTimerState = TimerState.Stop;
+                CurrentTimerState = TimerState.Stop;
                 break;
         }
 

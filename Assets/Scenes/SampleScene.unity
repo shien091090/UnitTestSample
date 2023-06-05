@@ -228,7 +228,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 238071400}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45e9486a4cf71da458cd9d187fe7f4d5, type: 3}
+  m_Script: {fileID: 11500000, guid: 44d6b644ac99444688f19e69d884a2a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   txt_buttonState: {fileID: 305702925}
@@ -410,7 +410,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 238071401}
-        m_TargetAssemblyTypeName: TimerManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: TimerView, Assembly-CSharp
         m_MethodName: OnClickButton
         m_Mode: 1
         m_Arguments:
