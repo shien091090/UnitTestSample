@@ -1,67 +1,55 @@
-using System.Collections;
-using UnityEngine;
-using UnityEngine.UI;
-
-public class TimerManager : MonoBehaviour
+public class TimerManager
 {
-    [SerializeField] private Text txt_buttonState;
-    [SerializeField] private Text txt_timer;
-    private TimerState currentTimerState = TimerState.Start;
-    private float timer = 0;
-    private Coroutine updateCoroutine;
+    private float timer;
+    private readonly ITimerView timerView;
+    public TimerState CurrentTimerState { get; private set; }
 
-    private void Start()
+    public TimerManager(ITimerView view)
     {
+        CurrentTimerState = TimerState.Start;
+        timer = 0;
+        timerView = view;
         RefreshButtonStateText();
+        RefreshTimer(0);
     }
 
-    private IEnumerator Cor_UpdateTimer()
+    public void RefreshTimer(float deltaTime)
     {
-        while (currentTimerState == TimerState.Play)
-        {
-            yield return new WaitForEndOfFrame();
-            RefreshTimer();
-        }
-    }
-
-    private void RefreshTimer()
-    {
-        timer += Time.deltaTime;
-        txt_timer.text = timer.ToString("0.0");
+        timer += deltaTime;
+        timerView.SetTimerText(timer.ToString("0.0"));
     }
 
     private void RefreshButtonStateText()
     {
-        switch (currentTimerState)
+        switch (CurrentTimerState)
         {
             case TimerState.Start:
-                txt_buttonState.text = "O";
+                timerView.SetButtonStateText("O");
                 break;
 
             case TimerState.Play:
-                txt_buttonState.text = ">";
+                timerView.SetButtonStateText(">");
                 break;
 
             case TimerState.Stop:
-                txt_buttonState.text = "=";
+                timerView.SetButtonStateText("=");
                 break;
         }
     }
 
     public void OnClickButton()
     {
-        switch (currentTimerState)
+        switch (CurrentTimerState)
         {
             case TimerState.Start:
             case TimerState.Stop:
-                currentTimerState = TimerState.Play;
-                updateCoroutine = StartCoroutine(Cor_UpdateTimer());
+                CurrentTimerState = TimerState.Play;
+                timerView.StartUpdateTimer();
                 break;
 
             case TimerState.Play:
-                currentTimerState = TimerState.Stop;
-                if (updateCoroutine != null)
-                    StopCoroutine(updateCoroutine);
+                CurrentTimerState = TimerState.Stop;
+                timerView.StopUpdateTimer();
                 break;
         }
 
