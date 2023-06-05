@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,18 +8,20 @@ public class TimerManager : MonoBehaviour
     [SerializeField] private Text txt_timer;
     private TimerState currentTimerState = TimerState.Start;
     private float timer = 0;
+    private Coroutine updateCoroutine;
 
     private void Start()
     {
         RefreshButtonStateText();
     }
 
-    private void Update()
+    private IEnumerator Cor_UpdateTimer()
     {
-        if (currentTimerState != TimerState.Play)
-            return;
-
-        RefreshTimer();
+        while (currentTimerState == TimerState.Play)
+        {
+            yield return new WaitForEndOfFrame();
+            RefreshTimer();
+        }
     }
 
     private void RefreshTimer()
@@ -52,10 +55,13 @@ public class TimerManager : MonoBehaviour
             case TimerState.Start:
             case TimerState.Stop:
                 currentTimerState = TimerState.Play;
+                updateCoroutine = StartCoroutine(Cor_UpdateTimer());
                 break;
 
             case TimerState.Play:
                 currentTimerState = TimerState.Stop;
+                if (updateCoroutine != null)
+                    StopCoroutine(updateCoroutine);
                 break;
         }
 
