@@ -4,7 +4,8 @@ public class TimerModel
 {
     public event Action<string> OnRefreshButtonStateText;
     public event Action<string> OnRefreshTimerText;
-    
+    public event Action<TimerState> OnRefreshTimerState;
+
     public TimerState CurrentTimerState { get; private set; }
     public float Timer { get; private set; }
 
@@ -61,6 +62,7 @@ public class TimerModel
         }
 
         RefreshButtonStateText();
+        OnRefreshTimerState?.Invoke(CurrentTimerState);
     }
 }
 
