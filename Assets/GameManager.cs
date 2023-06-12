@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        TimerManager timerManager = new TimerManager();
-        timerView.Inject(timerManager);
+        TimerModel timerModel = new TimerModel();
+        timerView.Inject(timerModel);
     }
 }

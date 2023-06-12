@@ -1,6 +1,6 @@
 using System;
 
-public class TimerManager
+public class TimerModel
 {
     public event Action<string> OnRefreshButtonStateText;
     public event Action<string> OnRefreshTimerText;
@@ -8,7 +8,7 @@ public class TimerManager
     public TimerState CurrentTimerState { get; private set; }
     public float Timer { get; private set; }
 
-    public TimerManager()
+    public TimerModel()
     {
         CurrentTimerState = TimerState.Start;
         RefreshButtonStateText();

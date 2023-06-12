@@ -5,16 +5,23 @@ using NUnit.Framework;
 
 public class TimerTest
 {
+    private TimerModel timerModel;
+
+    [SetUp]
+    private void Setup()
+    {
+        timerModel = new TimerModel();
+    }
+
     [Test]
     public void click_button_not_yet()
     {
         //Arrange 準備
-        TimerManager timerManager = new TimerManager();
         Action<string> onRefreshButtonStateEvent = Substitute.For<Action<string>>();
-        timerManager.OnRefreshButtonStateText += onRefreshButtonStateEvent;
+        timerModel.OnRefreshButtonStateText += onRefreshButtonStateEvent;
         //Act 執行
         //Assert 驗證
-        Assert.AreEqual(TimerState.Start, timerManager.CurrentTimerState);
+        Assert.AreEqual(TimerState.Start, timerModel.CurrentTimerState);
         onRefreshButtonStateEvent.DidNotReceive().Invoke(Arg.Any<string>());
     }
 
@@ -22,13 +29,12 @@ public class TimerTest
     public void first_click_button()
     {
         //Arrange 準備
-        TimerManager timerManager = new TimerManager();
         Action<string> onRefreshButtonStateEvent = Substitute.For<Action<string>>();
-        timerManager.OnRefreshButtonStateText += onRefreshButtonStateEvent;
+        timerModel.OnRefreshButtonStateText += onRefreshButtonStateEvent;
         //Act 執行
-        timerManager.OnClickButton();
+        timerModel.OnClickButton();
         //Assert 驗證
-        Assert.AreEqual(TimerState.Play, timerManager.CurrentTimerState);
+        Assert.AreEqual(TimerState.Play, timerModel.CurrentTimerState);
         onRefreshButtonStateEvent.Received(1).Invoke(Arg.Any<string>());
     }
 
@@ -36,14 +42,13 @@ public class TimerTest
     public void update_timer_when_playing()
     {
         //Arrange 準備
-        TimerManager timerManager = new TimerManager();
         Action<string> onRefreshTimerTextEvent = Substitute.For<Action<string>>();
-        timerManager.OnRefreshTimerText += onRefreshTimerTextEvent;
+        timerModel.OnRefreshTimerText += onRefreshTimerTextEvent;
         //Act 執行
-        timerManager.OnClickButton();
-        timerManager.CheckUpdateTimer(1.5f);
+        timerModel.OnClickButton();
+        timerModel.CheckUpdateTimer(1.5f);
         //Assert 驗證
-        Assert.AreEqual(1.5f, timerManager.Timer);
+        Assert.AreEqual(1.5f, timerModel.Timer);
         onRefreshTimerTextEvent.Received(1).Invoke("1.5");
     }
 
@@ -51,13 +56,12 @@ public class TimerTest
     public void update_timer_when_not_playing()
     {
         //Arrange 準備
-        TimerManager timerManager = new TimerManager();
         Action<string> onRefreshTimerTextEvent = Substitute.For<Action<string>>();
-        timerManager.OnRefreshTimerText += onRefreshTimerTextEvent;
+        timerModel.OnRefreshTimerText += onRefreshTimerTextEvent;
         //Act 執行
-        timerManager.CheckUpdateTimer(1.5f);
+        timerModel.CheckUpdateTimer(1.5f);
         //Assert 驗證
-        Assert.AreEqual(0, timerManager.Timer);
+        Assert.AreEqual(0, timerModel.Timer);
         onRefreshTimerTextEvent.DidNotReceive().Invoke(Arg.Any<string>());
     }
 
@@ -65,14 +69,13 @@ public class TimerTest
     public void click_button_when_playing()
     {
         //Arrange 準備
-        TimerManager timerManager = new TimerManager();
         Action<string> onRefreshButtonStateEvent = Substitute.For<Action<string>>();
-        timerManager.OnRefreshButtonStateText += onRefreshButtonStateEvent;
+        timerModel.OnRefreshButtonStateText += onRefreshButtonStateEvent;
         //Act 執行
-        timerManager.OnClickButton();
-        timerManager.OnClickButton();
+        timerModel.OnClickButton();
+        timerModel.OnClickButton();
         //Assert 驗證
-        Assert.AreEqual(TimerState.Stop, timerManager.CurrentTimerState);
+        Assert.AreEqual(TimerState.Stop, timerModel.CurrentTimerState);
         onRefreshButtonStateEvent.Received(2).Invoke(Arg.Any<string>());
 
         string lastButtonStateText = onRefreshButtonStateEvent.ReceivedCalls().Last().GetArguments().GetValue(0) as string;
@@ -83,15 +86,14 @@ public class TimerTest
     public void click_button_when_stop()
     {
         //Arrange 準備
-        TimerManager timerManager = new TimerManager();
         Action<string> onRefreshButtonStateEvent = Substitute.For<Action<string>>();
-        timerManager.OnRefreshButtonStateText += onRefreshButtonStateEvent;
+        timerModel.OnRefreshButtonStateText += onRefreshButtonStateEvent;
         //Act 執行
-        timerManager.OnClickButton();
-        timerManager.OnClickButton();
-        timerManager.OnClickButton();
+        timerModel.OnClickButton();
+        timerModel.OnClickButton();
+        timerModel.OnClickButton();
         //Assert 驗證
-        Assert.AreEqual(TimerState.Play, timerManager.CurrentTimerState);
+        Assert.AreEqual(TimerState.Play, timerModel.CurrentTimerState);
         onRefreshButtonStateEvent.Received(3).Invoke(Arg.Any<string>());
 
         string lastButtonStateText = onRefreshButtonStateEvent.ReceivedCalls().Last().GetArguments().GetValue(0) as string;

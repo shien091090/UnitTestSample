@@ -5,22 +5,22 @@ public class TimerView : MonoBehaviour
 {
     [SerializeField] private Text txt_buttonState;
     [SerializeField] private Text txt_timer;
-    private TimerManager timerManager;
+    private TimerModel timerModel;
 
     private void Update()
     {
-        timerManager.CheckUpdateTimer(Time.deltaTime);
+        timerModel.CheckUpdateTimer(Time.deltaTime);
     }
 
-    public void Inject(TimerManager timerManager)
+    public void Inject(TimerModel timerModel)
     {
-        this.timerManager = timerManager;
+        this.timerModel = timerModel;
 
-        timerManager.OnRefreshTimerText -= SetTimerText;
-        timerManager.OnRefreshTimerText += SetTimerText;
+        timerModel.OnRefreshTimerText -= SetTimerText;
+        timerModel.OnRefreshTimerText += SetTimerText;
 
-        timerManager.OnRefreshButtonStateText -= SetButtonStateText;
-        timerManager.OnRefreshButtonStateText += SetButtonStateText;
+        timerModel.OnRefreshButtonStateText -= SetButtonStateText;
+        timerModel.OnRefreshButtonStateText += SetButtonStateText;
     }
 
     private void SetTimerText(string timerText)
@@ -35,6 +35,6 @@ public class TimerView : MonoBehaviour
 
     public void OnClickButton()
     {
-        timerManager.OnClickButton();
+        timerModel.OnClickButton();
     }
 }
