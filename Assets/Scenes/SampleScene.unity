@@ -202,7 +202,7 @@ RectTransform:
   m_AnchoredPosition: {x: -6, y: 111}
   m_SizeDelta: {x: 583.2065, y: 320.6476}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &238071400
+--- !u!1 &269174844
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -210,36 +210,35 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 238071402}
-  - component: {fileID: 238071401}
+  - component: {fileID: 269174846}
+  - component: {fileID: 269174845}
   m_Layer: 0
-  m_Name: TimerManager
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &238071401
+--- !u!114 &269174845
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 238071400}
+  m_GameObject: {fileID: 269174844}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45e9486a4cf71da458cd9d187fe7f4d5, type: 3}
+  m_Script: {fileID: 11500000, guid: 013bd7718876c1d44a26032820847ce1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  txt_buttonState: {fileID: 305702925}
-  txt_timer: {fileID: 58317070}
---- !u!4 &238071402
+  timerView: {fileID: 1961487353}
+--- !u!4 &269174846
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 238071400}
+  m_GameObject: {fileID: 269174844}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -409,8 +408,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 238071401}
-        m_TargetAssemblyTypeName: TimerManager, Assembly-CSharp
+      - m_Target: {fileID: 1961487353}
+        m_TargetAssemblyTypeName: TimerView, Assembly-CSharp
         m_MethodName: OnClickButton
         m_Mode: 1
         m_Arguments:
@@ -710,6 +709,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1961487349}
+  - component: {fileID: 1961487353}
   - component: {fileID: 1961487352}
   - component: {fileID: 1961487351}
   - component: {fileID: 1961487350}
@@ -802,3 +802,17 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1961487353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1961487348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53bfbdc553e74876a7635d640851aad6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  txt_buttonState: {fileID: 305702925}
+  txt_timer: {fileID: 58317070}
