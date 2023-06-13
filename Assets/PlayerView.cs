@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,38 +8,44 @@ public class PlayerView : MonoBehaviour
     [SerializeField] private Image img_player;
     [SerializeField] private Color movableColor;
     [SerializeField] private Color unmovableColor;
-    private TimerModel timerModel;
+    private PlayerModel playerModel;
 
     private void Start()
     {
-        timerModel.OnRefreshTimerState -= RefreshColor;
-        timerModel.OnRefreshTimerState += RefreshColor;
-        RefreshColor(timerModel.CurrentTimerState);
+        playerModel.Init();
     }
 
     private void Update()
     {
-        if (timerModel.CurrentTimerState != TimerState.Play)
-            return;
-
-        float horizontalAxis = Input.GetAxis("Horizontal");
-        if (horizontalAxis != 0)
-            transform.Translate(Vector3.right * horizontalAxis * Time.deltaTime * speed);
-
-        float VerticalAxis = Input.GetAxis("Vertical");
-        if (VerticalAxis != 0)
-            transform.Translate(Vector3.up * VerticalAxis * Time.deltaTime * speed);
+        playerModel.CheckUpdateMoving(Time.deltaTime, speed);
     }
 
-    public void Inject(TimerModel timerModel)
+    public void Inject(PlayerModel playerModel)
     {
-        this.timerModel = timerModel;
+        this.playerModel = playerModel;
+
+        playerModel.OnUpdateMoving -= Move;
+        playerModel.OnUpdateMoving += Move;
+
+        playerModel.OnRefreshMovableColor -= SetMovableColor;
+        playerModel.OnRefreshMovableColor += SetMovableColor;
+
+        playerModel.OnRefreshUnmovableColor -= SetUnmovableColor;
+        playerModel.OnRefreshUnmovableColor += SetUnmovableColor;
     }
 
-    private void RefreshColor(TimerState timerState)
+    private void SetMovableColor()
     {
-        img_player.color = timerState == TimerState.Play ?
-            movableColor :
-            unmovableColor;
+        img_player.color = movableColor;
+    }
+
+    private void SetUnmovableColor()
+    {
+        img_player.color = unmovableColor;
+    }
+
+    private void Move(Vector3 moveVector)
+    {
+        transform.Translate(moveVector);
     }
 }

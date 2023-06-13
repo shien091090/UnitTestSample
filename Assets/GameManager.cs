@@ -7,8 +7,11 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        InputController inputController = new InputController();
         TimerModel timerModel = new TimerModel();
+        PlayerModel playerModel = new PlayerModel(timerModel, inputController);
+        
         timerView.Inject(timerModel);
-        playerView.Inject(timerModel);
+        playerView.Inject(playerModel);
     }
 }
