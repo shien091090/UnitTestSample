@@ -1,6 +1,12 @@
 using System;
 
-public class TimerModel
+public interface ITimerModel
+{
+    event Action<TimerState> OnRefreshTimerState;
+    TimerState CurrentTimerState { get; }
+}
+
+public class TimerModel : ITimerModel
 {
     public event Action<string> OnRefreshButtonStateText;
     public event Action<string> OnRefreshTimerText;

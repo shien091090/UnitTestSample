@@ -3,14 +3,14 @@ using UnityEngine;
 
 public class PlayerModel
 {
-    private readonly TimerModel timerModel;
+    private readonly ITimerModel timerModel;
     private readonly IInputController inputController;
 
     public event Action OnRefreshUnmovableColor;
     public event Action OnRefreshMovableColor;
     public event Action<Vector3> OnUpdateMoving;
 
-    public PlayerModel(TimerModel timerModel, IInputController inputController)
+    public PlayerModel(ITimerModel timerModel, IInputController inputController)
     {
         this.timerModel = timerModel;
         this.inputController = inputController;
@@ -25,18 +25,16 @@ public class PlayerModel
             return;
 
         float horizontalAxis = inputController.GetAxis("Horizontal");
+        Vector3 horizontalMoveVector = Vector3.zero;
         if (horizontalAxis != 0)
-        {
-            Vector3 horizontalMoveVector = Vector3.right * horizontalAxis * deltaTime * speed;
-            OnUpdateMoving?.Invoke(horizontalMoveVector);
-        }
+            horizontalMoveVector = Vector3.right * horizontalAxis * deltaTime * speed;
 
         float VerticalAxis = inputController.GetAxis("Vertical");
+        Vector3 verticalMoveVector = Vector3.zero;
         if (VerticalAxis != 0)
-        {
-            Vector3 verticalMoveVector = Vector3.up * VerticalAxis * deltaTime * speed;
-            OnUpdateMoving?.Invoke(verticalMoveVector);
-        }
+            verticalMoveVector = Vector3.up * VerticalAxis * deltaTime * speed;
+
+        OnUpdateMoving?.Invoke(horizontalMoveVector + verticalMoveVector);
     }
 
     public void Init()
