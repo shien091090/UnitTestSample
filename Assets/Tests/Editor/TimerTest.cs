@@ -8,7 +8,7 @@ public class TimerTest
     private TimerModel timerModel;
 
     [SetUp]
-    private void Setup()
+    public void Setup()
     {
         timerModel = new TimerModel();
     }
