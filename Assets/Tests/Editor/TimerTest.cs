@@ -18,11 +18,12 @@ public class TimerTest
     {
         //Arrange 準備
         Action<string> onRefreshButtonStateEvent = Substitute.For<Action<string>>();
-        timerModel.OnRefreshButtonStateText += onRefreshButtonStateEvent;
+        timerModel.OnRefreshMainButtonStateText += onRefreshButtonStateEvent;
         //Act 執行
+        timerModel.Init();
         //Assert 驗證
         Assert.AreEqual(TimerState.Start, timerModel.CurrentTimerState);
-        onRefreshButtonStateEvent.DidNotReceive().Invoke(Arg.Any<string>());
+        onRefreshButtonStateEvent.Received(1).Invoke("O");
     }
 
     [Test]
@@ -30,12 +31,15 @@ public class TimerTest
     {
         //Arrange 準備
         Action<string> onRefreshButtonStateEvent = Substitute.For<Action<string>>();
-        timerModel.OnRefreshButtonStateText += onRefreshButtonStateEvent;
+        timerModel.OnRefreshMainButtonStateText += onRefreshButtonStateEvent;
         //Act 執行
-        timerModel.OnClickButton();
+        timerModel.Init();
+        timerModel.OnClickMainButton();
         //Assert 驗證
         Assert.AreEqual(TimerState.Play, timerModel.CurrentTimerState);
-        onRefreshButtonStateEvent.Received(1).Invoke(Arg.Any<string>());
+        onRefreshButtonStateEvent.Received(2).Invoke(Arg.Any<string>());
+        string lastButtonStateText = onRefreshButtonStateEvent.ReceivedCalls().Last().GetArguments().GetValue(0) as string;
+        Assert.AreEqual(">", lastButtonStateText);
     }
 
     [Test]
@@ -45,7 +49,8 @@ public class TimerTest
         Action<string> onRefreshTimerTextEvent = Substitute.For<Action<string>>();
         timerModel.OnRefreshTimerText += onRefreshTimerTextEvent;
         //Act 執行
-        timerModel.OnClickButton();
+        timerModel.Init();
+        timerModel.OnClickMainButton();
         timerModel.CheckUpdateTimer(1.5f);
         //Assert 驗證
         Assert.AreEqual(1.5f, timerModel.Timer);
@@ -59,6 +64,7 @@ public class TimerTest
         Action<string> onRefreshTimerTextEvent = Substitute.For<Action<string>>();
         timerModel.OnRefreshTimerText += onRefreshTimerTextEvent;
         //Act 執行
+        timerModel.Init();
         timerModel.CheckUpdateTimer(1.5f);
         //Assert 驗證
         Assert.AreEqual(0, timerModel.Timer);
@@ -70,13 +76,14 @@ public class TimerTest
     {
         //Arrange 準備
         Action<string> onRefreshButtonStateEvent = Substitute.For<Action<string>>();
-        timerModel.OnRefreshButtonStateText += onRefreshButtonStateEvent;
+        timerModel.OnRefreshMainButtonStateText += onRefreshButtonStateEvent;
         //Act 執行
-        timerModel.OnClickButton();
-        timerModel.OnClickButton();
+        timerModel.Init();
+        timerModel.OnClickMainButton();
+        timerModel.OnClickMainButton();
         //Assert 驗證
-        Assert.AreEqual(TimerState.Stop, timerModel.CurrentTimerState);
-        onRefreshButtonStateEvent.Received(2).Invoke(Arg.Any<string>());
+        Assert.AreEqual(TimerState.Pause, timerModel.CurrentTimerState);
+        onRefreshButtonStateEvent.Received(3).Invoke(Arg.Any<string>());
 
         string lastButtonStateText = onRefreshButtonStateEvent.ReceivedCalls().Last().GetArguments().GetValue(0) as string;
         Assert.AreEqual("=", lastButtonStateText);
@@ -87,16 +94,64 @@ public class TimerTest
     {
         //Arrange 準備
         Action<string> onRefreshButtonStateEvent = Substitute.For<Action<string>>();
-        timerModel.OnRefreshButtonStateText += onRefreshButtonStateEvent;
+        timerModel.OnRefreshMainButtonStateText += onRefreshButtonStateEvent;
         //Act 執行
-        timerModel.OnClickButton();
-        timerModel.OnClickButton();
-        timerModel.OnClickButton();
+        timerModel.Init();
+        timerModel.OnClickMainButton();
+        timerModel.OnClickMainButton();
+        timerModel.OnClickMainButton();
         //Assert 驗證
         Assert.AreEqual(TimerState.Play, timerModel.CurrentTimerState);
-        onRefreshButtonStateEvent.Received(3).Invoke(Arg.Any<string>());
+        onRefreshButtonStateEvent.Received(4).Invoke(Arg.Any<string>());
 
         string lastButtonStateText = onRefreshButtonStateEvent.ReceivedCalls().Last().GetArguments().GetValue(0) as string;
         Assert.AreEqual(">", lastButtonStateText);
+    }
+
+    [Test]
+    public void hide_stop_button_at_start()
+    {
+        //Arrange
+        Action<bool> onRefreshStopButtonActive = Substitute.For<Action<bool>>();
+        timerModel.OnRefreshStopButtonActive += onRefreshStopButtonActive;
+
+        //Act
+        timerModel.Init();
+
+        //Assert
+        onRefreshStopButtonActive.Received(1).Invoke(false);
+    }
+
+    [Test]
+    public void show_stop_button_when_playing()
+    {
+        //Arrange
+        Action<bool> onRefreshStopButtonActive = Substitute.For<Action<bool>>();
+        timerModel.OnRefreshStopButtonActive += onRefreshStopButtonActive;
+
+        //Act
+        timerModel.Init();
+        timerModel.OnClickMainButton();
+
+        //Assert
+        bool isActive = (bool)onRefreshStopButtonActive.ReceivedCalls().Last().GetArguments().GetValue(0);
+        Assert.IsTrue(isActive);
+    }
+
+    [Test]
+    public void show_stop_button_when_pausing()
+    {
+        //Arrange
+        Action<bool> onRefreshStopButtonActive = Substitute.For<Action<bool>>();
+        timerModel.OnRefreshStopButtonActive += onRefreshStopButtonActive;
+
+        //Act
+        timerModel.Init();
+        timerModel.OnClickMainButton();
+        timerModel.OnClickMainButton();
+
+        //Assert
+        bool isActive = (bool)onRefreshStopButtonActive.ReceivedCalls().Last().GetArguments().GetValue(0);
+        Assert.IsTrue(isActive);
     }
 }

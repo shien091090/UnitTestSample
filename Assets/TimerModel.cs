@@ -8,18 +8,20 @@ public interface ITimerModel
 
 public class TimerModel : ITimerModel
 {
-    public event Action<string> OnRefreshButtonStateText;
-    public event Action<string> OnRefreshTimerText;
-    public event Action<TimerState> OnRefreshTimerState;
-
     public TimerState CurrentTimerState { get; private set; }
+    public event Action<string> OnRefreshMainButtonStateText;
+    public event Action<string> OnRefreshTimerText;
+    public event Action<bool> OnRefreshStopButtonActive;
     public float Timer { get; private set; }
 
-    public TimerModel()
+    public void Init()
     {
         CurrentTimerState = TimerState.Start;
-        RefreshButtonStateText();
+        RefreshMainButtonStateText();
+        RefreshSubButtonState();
     }
+
+    public event Action<TimerState> OnRefreshTimerState;
 
     public void CheckUpdateTimer(float deltaTime)
     {
@@ -29,45 +31,67 @@ public class TimerModel : ITimerModel
         RefreshTimer(deltaTime);
     }
 
+    private void RefreshSubButtonState()
+    {
+        OnRefreshStopButtonActive?.Invoke(CurrentTimerState != TimerState.Start);
+    }
+
     private void RefreshTimer(float deltaTime)
     {
         Timer += deltaTime;
-        OnRefreshTimerText?.Invoke(Timer.ToString("0.0"));
+        SendRefreshTimerEvent();
     }
 
-    private void RefreshButtonStateText()
+    private void RefreshMainButtonStateText()
     {
         switch (CurrentTimerState)
         {
             case TimerState.Start:
-                OnRefreshButtonStateText?.Invoke("0");
+                OnRefreshMainButtonStateText?.Invoke("O");
                 break;
 
             case TimerState.Play:
-                OnRefreshButtonStateText?.Invoke(">");
+                OnRefreshMainButtonStateText?.Invoke(">");
                 break;
 
+            case TimerState.Pause:
             case TimerState.Stop:
-                OnRefreshButtonStateText?.Invoke("=");
+                OnRefreshMainButtonStateText?.Invoke("=");
                 break;
         }
     }
 
-    public void OnClickButton()
+    private void SendRefreshTimerEvent()
+    {
+        OnRefreshTimerText?.Invoke(Timer.ToString("0.0"));
+    }
+
+    public void OnClickMainButton()
     {
         switch (CurrentTimerState)
         {
             case TimerState.Start:
             case TimerState.Stop:
+            case TimerState.Pause:
                 CurrentTimerState = TimerState.Play;
                 break;
 
             case TimerState.Play:
-                CurrentTimerState = TimerState.Stop;
+                CurrentTimerState = TimerState.Pause;
                 break;
         }
 
-        RefreshButtonStateText();
+        RefreshMainButtonStateText();
+        RefreshSubButtonState();
+        OnRefreshTimerState?.Invoke(CurrentTimerState);
+    }
+
+    public void OnClickStopButton()
+    {
+        CurrentTimerState = TimerState.Stop;
+        Timer = 0;
+        RefreshMainButtonStateText();
+        SendRefreshTimerEvent();
         OnRefreshTimerState?.Invoke(CurrentTimerState);
     }
 }
@@ -76,5 +100,6 @@ public enum TimerState
 {
     Start,
     Play,
-    Stop
+    Stop,
+    Pause
 }
